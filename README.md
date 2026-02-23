@@ -24,9 +24,44 @@ EdgeIQ is an MVP backend for AI-assisted sports betting analytics. It uses **rea
 3. Add your `ODDS_API_KEY` in `.env`.
 4. Run API:
    ```bash
-   uvicorn edgeiq.main:app --reload
+   uvicorn edgeiq.main:app --app-dir src --reload
    ```
 5. Open docs: `http://127.0.0.1:8000/docs`
+
+### Local verification checklist
+After setup, run:
+
+```bash
+pytest -q
+curl http://127.0.0.1:8000/health
+```
+
+Expected behavior:
+- `/health` returns `{"status":"ok"}`.
+- `/api/v1/picks/daily` returns HTTP 503 until `ODDS_API_KEY` is configured.
+
+## Railway deployment checklist
+This repo includes a `Procfile` and Python runtime pin for Railway.
+
+1. In Railway, set **Start Command** to:
+   ```bash
+   uvicorn edgeiq.main:app --app-dir src --host 0.0.0.0 --port ${PORT:-8000}
+   ```
+2. Add environment variable:
+   - `ODDS_API_KEY=<your The Odds API key>`
+3. (Optional) tune:
+   - `ODDS_SPORTS`
+   - `ODDS_MARKETS`
+   - `ODDS_REGIONS`
+   - `MINIMUM_EDGE_PCT`
+4. Verify:
+   - `GET /health` should return 200.
+   - `GET /api/v1/picks/daily` should return picks when key/quota are valid.
+
+If Railway logs show build/runtime failures, most common causes are:
+- Python version mismatch (this project requires Python 3.11+).
+- Missing `ODDS_API_KEY`.
+- The Odds API quota exhausted (API call returns 4xx/5xx and endpoint surfaces 503).
 
 ## Core endpoint
 - `GET /api/v1/picks/daily`
