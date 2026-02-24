@@ -1,2 +1,5 @@
+[build]
+buildCommand = "pip install ."
+
 [deploy]
 startCommand = "PYTHONPATH=src python -m uvicorn edgeiq.main:app --host 0.0.0.0 --port $PORT"
