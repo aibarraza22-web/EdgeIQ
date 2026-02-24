@@ -1,1 +1,1 @@
-web: python -m uvicorn edgeiq.main:app --app-dir src --host 0.0.0.0 --port ${PORT:-8000}
+web: PYTHONPATH=src python -m uvicorn edgeiq.main:app --host 0.0.0.0 --port ${PORT:-8000}
